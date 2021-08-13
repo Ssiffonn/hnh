@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: user
+        uid: 1000
+      context: ./
+      dockerfile: ./.docker/Dockerfile
+    image: hnh
+    container_name: hnh-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./hnh/:/var/www
+    networks:
+      - hnh
+
+  nginx:
+    image: nginx:alpine
+    container_name: hnh-nginx
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - ./hnh/:/var/www
+      - ./.docker/nginx/:/etc/nginx/conf.d/
+    networks:
+      - hnh
+
+networks:
+  hnh:
+    driver: bridge
